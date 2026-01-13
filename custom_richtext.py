@@ -22,3 +22,14 @@ def richtext(value):
         html = str(soup)
 
     return mark_safe(f'<div class="rich-text">{html}</div>')
+
+@register.filter
+def remove_highlight(value):
+    """
+    Strips <mark> tags from the content when settings.IS_READONLY is True,
+    preserving the text inside. Otherwise passes the content through unchanged.
+    """
+    if getattr(settings, "IS_READONLY", False):
+        value = re.sub(r"<mark[^>]*>", "", value)
+        value = re.sub(r"</mark>", "", value)
+    return value
